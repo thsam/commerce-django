@@ -1,4 +1,4 @@
-# commerce-django
+# commerce-django 🐍
 Design an eBay-like e-commerce auction site that will allow users to post auction listings, place bids on listings, comment on those listings, and add listings to a “watchlist.” 🚚 
 ## Specification 🤞
 Complete the implementation of your auction site. You must fulfill the following requirements:
@@ -15,3 +15,13 @@ Complete the implementation of your auction site. You must fulfill the following
 * Watchlist: Users who are signed in should be able to visit a Watchlist page, which should display all of the listings that a user has added to their watchlist. Clicking on any of those listings should take the user to that listing’s page.
 * Categories: Users should be able to visit a page that displays a list of all listing categories. Clicking on the name of any category should take the user to a page that displays all of the active listings in that category.
 * Django Admin Interface: Via the Django admin interface, a site administrator should be able to view, add, edit, and delete any listings, comments, and bids made on the site.
+
+## Hints 🤏
+* To create a superuser account that can access Django’s admin interface
+* See Django’s Model field reference for possible field types for your Django model.
+* You’ll likely need to create some Django forms for various parts of this web application.
+* Adding the @login_required decorator on top of any view will ensure that only a user who is logged in can access that view.
+* You’re welcome to modify the CSS as much as you’d like, to make the website your own! Some sample screenshots are shown at the top of this page. These are meant only to be examples: your application need not be aesthetically the same as the screenshots here (you’re encouraged to be creative!).
+
+
+**Course [here](https://www.edx.org/course/cs50s-web-programming-with-python-and-javascript)** 📚 👌
