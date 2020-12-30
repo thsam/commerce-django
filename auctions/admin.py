@@ -6,3 +6,4 @@ from . models import User, Listing, Bid, Comment, watchlist
 admin.site.register(Listing)
 admin.site.register(Comment)
 admin.site.register(watchlist)
+admin.site.register(User)

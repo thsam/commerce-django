@@ -9,7 +9,7 @@
     </h2>
     
     {% if listing.image %}
-    <img class="my-3" src="{{ listing.image }}" alt="{{ listing.title }}">
+    <img class="my-3 w-50 p-3" src="{{ listing.image }}" alt="{{ listing.title }}">
     {% endif %}
     <p>{{ listing.description }}</p>
 
@@ -38,6 +38,22 @@
             {% endif %}
         {% endif %}
     </p>
+    <!-- agregar una oferta-->
+    <div class="mt-4">
+        <h4>Place your bid:</h4>
+        <form action="" method="POST">
+            {% csrf_token %}
+              <div class="form-row align-items-center">
+                <div class="col-auto">
+                  <input type="number" class="form-control mb-2" id="inlineFormInput" name="bid" placeholder="your bid...">
+                </div>
+                <div class="col-auto">
+                  <button type="submit" class="btn btn-primary mb-2">Submit</button>
+                </div>
+              </div>
+        </form>
+
+    </div>
     <!-- Agregar comentarios de los comentarios
     {% if user.is_authenticated %}
         <div class="card-header">
