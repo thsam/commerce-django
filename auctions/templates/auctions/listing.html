@@ -1,0 +1,84 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+<div>
+    <h2>
+        {% if not listing.active %}
+        CLOSED - 
+        {% endif %}
+        {{ listing.title }}
+    </h2>
+    
+    {% if listing.image %}
+    <img class="my-3" src="{{ listing.image }}" alt="{{ listing.title }}">
+    {% endif %}
+    <p>{{ listing.description }}</p>
+
+        <h2 class="my-3">${% firstof listing.highest_bid_price|floatformat:"2" listing.price %}</h2>
+        <!--<a class="btn btn-primary" href="{% url 'add_watchlist' listing.id %}" role="button">WatchList</a>-->
+    </div>
+
+    <div class="mt-4">
+        <h3 class="text-primary">Details</h3>
+        <ul>
+            <li><strong>Category: </strong>{{ listing.category|capfirst }}</li>
+            <li><strong>Listed by: </strong>{{ listing.creator.username }}</li>
+            <li><strong>Listed on: </strong>{{ listing.timestamp|date:"F j Y, h:i a" }}</li>
+        </ul>
+    </div>
+    <!-- añadir/remover watchlist-->
+    <p> 
+        {% if user.is_authenticated %}
+            {% if added %}
+                <a href="{% url 'add_watchlist' listing.id %}"><button class="btn btn-danger">Remove from watchlist</button></a>
+                {% else %}
+                <a href="{% url 'add_watchlist' listing.id %}"><button class="btn btn-success">Add to watchlist</button></a>
+            {% endif %}
+            {% if creador %}
+            <a href="{% url 'close_listing' listing.id %}"><button class="btn btn-danger">Close listing</button></a>
+            {% endif %}
+        {% endif %}
+    </p>
+    <!-- Agregar comentarios de los comentarios
+    {% if user.is_authenticated %}
+        <div class="card-header">
+            <h3 class="text-dark m-0">Add Comment</h3>
+        </div>
+        <div class ="card-body">
+            Please Login to comment
+        </div>
+    {% else %}
+        
+    {% endif %}-->
+    <div class="card">
+        <div class="card-header">
+          ADD COMMENT 
+        </div>
+        <div class="card-body">
+            {% if user.is_authenticated %}
+            <form action="{% url 'add_comment' listing.id %}" method="post">
+                {% csrf_token %}
+                {{comment_form}}
+                <br/>
+                <input class="save btn btn-info" type="submit" value="ADD coment"/>
+            
+            </form>
+            {% else %}
+         <!-- <h5 class="card-title">Special title treatment</h5>-->
+          <p class="card-text">Please <a href="{% url 'login' %}">Log In</a> to comment</p>
+            {% endif %}
+        </div>
+      </div>
+
+    <div class="mt-4">
+        <h3 class="text-primary">Comments</h3>
+        {% for comment in comments %}
+            <div class="comment">
+                <h5>{{ comment.commenter }}</h5>
+                <p class="text-muted"><small>{{ comment.timestamp }}</small></p>
+                <p>{{ comment.content }}</p>
+            </div>
+        {% empty %}
+            <p>No comments yet.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

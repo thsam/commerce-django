@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+    <h2>Create Listing:</h2>
+    <form method="POST" action="{% url 'create' %}">
+        {% csrf_token %}
+        <h6 class="post-title">Title: {{listing_form.title}}</h6>
+        <br />
+        <p>Description: {{listing_form.description}}</p>
+        <p>Start price: {{listing_form.price}}</p>
+        <p> Category: {{listing_form.category}}</p>
+        <p></p>URL IMAGE (optional) {{listing_form.image}}</p>
+        <br />
+
+        <input class="save btn btn-info" type="submit" value="Save"/>
+</form>
+        
+
+
+{% endblock %}
