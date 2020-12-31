@@ -7,3 +7,5 @@ admin.site.register(Listing)
 admin.site.register(Comment)
 admin.site.register(watchlist)
 admin.site.register(User)
+admin.site.register(Bid)
+

@@ -6,7 +6,7 @@ from django.urls import reverse
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from .models import Listing, Comment, watchlist,User
+from .models import Listing, Comment, watchlist,User, Bid
 
 LISTING_CATEGORIES = [
         ('BOOKS', 'Books'),
@@ -178,7 +178,31 @@ def close_listing(request,listing_id):
     set_close.active=False
     set_close.save()
     print("**** se ha desactivado")
-    return HttpResponseRedirect(reverse("index"))
+    #una vez desactivado, hay que redirigir a la ventana
+    product=set_close.title
+    creador=set_close.creator
+    pricef=set_close.price
+    categoria=set_close.category
+    if(Bid.objects.get(id=listing_id) is not None):
+        winner=Bid.objects.get(id=listing_id)
+        winner_name=winner.bidder
+
+        return render(request, "auctions/listing.html", {
+        "listing": l,
+        "comments":Comment.objects.filter(listing=l),
+        "comment_form": AddCommentForm(),
+        "watchlist": w,
+        "added": added,
+        "creador":creadorl
+    })
+    
+    pass
+        
+
+    
+
+    #oferta=Bid(listing=listing_items, bidder=request.user,bid_price=user_bid)
+    #return HttpResponseRedirect(reverse("index"))
 #mostrar los comentarios
 def categories(request):
     categories = Listing.objects.filter(active=True).order_by("category").values_list("category", flat=True).distinct()
@@ -277,6 +301,45 @@ def add_watchlist(request,listing_id):
         add.save()
         return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
         #return get_watchlist(request)
+@login_required
+def add_bid(request,listingid):
+    current_bid = Listing.objects.get(id=listingid)
+    current_bid=current_bid.price #obtenemos el precio
+    print("precio actual",current_bid)
+    if request.method == "POST":
+        user_bid = float(request.POST.get("bid"))
+        print("postulado",user_bid)
+        if user_bid > current_bid:
+            listing_items = Listing.objects.get(id=listingid)
+            listing_items.price = user_bid #se intercambia el valor 
+            listing_items.save()
+            #guardamos en la lista de ofertas
+            oferta=Bid(listing=listing_items, bidder=request.user,bid_price=user_bid)
+            oferta.save()
+            print("guardado oferta")
+            return listing(request,listingid)
+        else:
+            return HttpResponseRedirect(reverse("index")) #cambiar
+    """ if request.method == "POST":
+        user_bid = int(request.POST.get("bid"))
+        if user_bid > current_bid:
+            listing_items = Listing.objects.get(id=listingid)
+            listing_items.price = user_bid
+            listing_items.save()
+            try:
+                if Bid.objects.filter(id=listingid):
+                    bidrow = Bid.objects.filter(id=listingid)
+                    bidrow.delete()
+                bidtable = Bid()
+                bidtable.user=request.user.username
+                bidtable.title = listing_items.title
+                bidtable.listingid = listingid
+                bidtable.bid = us """
+    #pass
+@login_required
+def winnings(request,listingid):
+
+    pass
     """if request.user.is_authenticated:
         in_watchlist = listing in request.user.watchlist.all()
     else:

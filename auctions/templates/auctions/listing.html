@@ -40,8 +40,9 @@
     </p>
     <!-- agregar una oferta-->
     <div class="mt-4">
+        {% if user.is_authenticated %}
         <h4>Place your bid:</h4>
-        <form action="" method="POST">
+        <form action="{% url 'add_bid' listing.id %}" method="POST">
             {% csrf_token %}
               <div class="form-row align-items-center">
                 <div class="col-auto">
@@ -52,6 +53,7 @@
                 </div>
               </div>
         </form>
+        {% endif %}
 
     </div>
     <!-- Agregar comentarios de los comentarios
