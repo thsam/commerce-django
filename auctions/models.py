@@ -26,8 +26,8 @@ class Bid(models.Model): #OFERTAS
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
     bid_price = models.DecimalField(decimal_places=2, verbose_name="Bid Price", max_digits=15, null=True)
 
-    def __str__(self):
-        return f"{self.bidder} bid ${self.bid_price} for {self.listing}"
+    """ def __str__(self):
+        return f"{self.bidder} bid ${self.bid_price} for {self.listing}" """
 
 class Comment(models.Model): #COMENTARIOS
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments", null=True)

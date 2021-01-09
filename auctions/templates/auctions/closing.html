@@ -1,0 +1,33 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container">
+    <h2 style="text-align: center;">Closed</h2>
+</div>
+
+<div class="container" id="listings">
+    <div class="card mb-3" style="max-width: 540px;" id="card-listings">
+        <div class="row no-gutters">
+          {% if listing.image %}
+         <div class="col-md-4">
+            <img src="{{ listing.image }}" class="card-img" alt="{{ listing.title }}">
+
+          </div>
+          {% endif %}
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">{{listing.title}} &#128276;</h5>
+              <p class="card-text">{{listing.description}}</p>
+              <p class="card-text">{{listing.category}}</p>
+              <p class="card-text"><b>Owner:</b>{{listing.creator}}</p>
+              <p class="card-text"><b>Winning Bid:</b>${{listing.price}}</p>
+              <p class="card-text"><b>Winner:</b>{{winner_name}} &#128081;</p>
+              
+      
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+</div>
+{% endblock %}

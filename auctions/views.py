@@ -179,26 +179,40 @@ def close_listing(request,listing_id):
     set_close.save()
     print("**** se ha desactivado")
     #una vez desactivado, hay que redirigir a la ventana
-    product=set_close.title
+    """ product=set_close.title
     creador=set_close.creator
     pricef=set_close.price
-    categoria=set_close.category
-    if(Bid.objects.get(id=listing_id) is not None):
-        winner=Bid.objects.get(id=listing_id)
-        winner_name=winner.bidder
+    categoria=set_close.category """
+    bidder_exits=Bid.objects.get(listing=set_close)
+    try:
+        bidder_exits=Bid.objects.get(listing=set_close)
+    except bidder_exits.DoesNotExist:
+        bidder_exits = None
+    if(bidder_exits is not None):
+        #winner=Bid.objects.get(id=listing_id)
+        winner_name=bidder_exits.bidder
 
-        return render(request, "auctions/listing.html", {
-        "listing": l,
-        "comments":Comment.objects.filter(listing=l),
-        "comment_form": AddCommentForm(),
-        "watchlist": w,
-        "added": added,
-        "creador":creadorl
-    })
-    
-    pass
-        
+        return render(request, "auctions/closing.html", {
+        "listing": set_close,
+        "winner_name":winner_name
+        })
+    else:
+        return HttpResponseRedirect(reverse("index"))
+#lista de todos los articulos cerrados
+@login_required
+def closed_list(request):
+    articles= Listing.objects.get(creator=request.user)
+    a=Bid.objects.get(listing=articles)
+    if(a is not None):
+        #winner=Bid.objects.get(id=listing_id)
+        winner_name=a.bidder
 
+        return render(request, "auctions/closing.html", {
+        "listing": articles,
+        "winner_name":winner_name
+        })
+    else:
+        return HttpResponseRedirect(reverse("index"))        
     
 
     #oferta=Bid(listing=listing_items, bidder=request.user,bid_price=user_bid)
@@ -313,10 +327,17 @@ def add_bid(request,listingid):
             listing_items = Listing.objects.get(id=listingid)
             listing_items.price = user_bid #se intercambia el valor 
             listing_items.save()
-            #guardamos en la lista de ofertas
-            oferta=Bid(listing=listing_items, bidder=request.user,bid_price=user_bid)
-            oferta.save()
-            print("guardado oferta")
+            #comprobamos que no haya ofertado antes
+            Bid_exist=Bid.objects.filter(listing=listing_items)
+            if Bid_exist:
+                #guardamos en la lista de ofertas7
+                oferta=Bid(listing=listing_items, bidder=request.user,bid_price=user_bid)
+                oferta.save()
+                print("guardado oferta nueva")
+            else:
+                Bid_exist.bid_price=user_bid
+                #Bid_exist.save()
+                print("actualizando mi oferta")
             return listing(request,listingid)
         else:
             return HttpResponseRedirect(reverse("index")) #cambiar
@@ -337,7 +358,29 @@ def add_bid(request,listingid):
                 bidtable.bid = us """
     #pass
 @login_required
-def winnings(request,listingid):
+def winnings(request):
+    #desactivamos el listing
+    #return HttpResponse("Hello, Brian!")
+    win = Bid.objects.filter(bidder=request.user)
+    
+    print("HOLAAAAAA*************",win)
+    #set_close.active=False
+    #set_close.save()
+    #una vez desactivado, hay que redirigir a la ventana
+   
+    #a=Bid.objects.get(listing=win)
+    if(win is not None):
+        #winner=Bid.objects.get(id=listing_id)
+        
+
+        return render(request, "auctions/winning.html", {
+        "listing": win,
+        "winner_name":win,
+        "titulo":"My winnings"
+        })
+    else:
+        return HttpResponseRedirect(reverse("index"))
+        
 
     pass
     """if request.user.is_authenticated:
@@ -352,3 +395,6 @@ def winnings(request,listingid):
 
     return HttpResponseRedirect(reverse("listing", args=(listing.id,)))"""
     
+
+#cosillas que faltan
+#activar el closing
