@@ -135,14 +135,11 @@ def create(request):
     })
 
 def listing(request,listing_id):
-    #listing, comments, in_watchlist = listing_page_utility(request, listing_id)
     #muestra el listing específico
     l=Listing.objects.get(id=listing_id) #aquí debo filtrar y colocar la última oferta más alta
     if request.user.is_authenticated:
         w=watchlist.objects.all().filter(creator_list=request.user).count()
         added=watchlist.objects.filter(creator_list=request.user,listing_id=listing_id) #da true o false
-        #creadorl=Listing.objects.filter(creator=request.user,listing_id=listing_id)
-        #print("\n CREADOR, ",creadorl,l.creator) 
         if request.user == l.creator:
             creadorl=True
         else:
@@ -152,14 +149,7 @@ def listing(request,listing_id):
         w=False
         added=False
         creadorl=False
-    print(w)
-    #datos = User.objects.all().values()
-    #print(datos)
-    #proceso para saber si la lista ha sido añadida o no
-    #added=watchlist.objects.filter(creator_list=request.user,listing_id=listing_id) #da true o false
-    #proceso para cerrar un listing 
-    #1) similar al proceso de añadir a watchlist, preguntamos si el es el creador del listing
-    #creadorl=Listing.objects.filter(creator=request.user) 
+    #print(w)
 
 
     return render(request, "auctions/listing.html", {
@@ -172,25 +162,13 @@ def listing(request,listing_id):
     })
 @login_required
 def close_listing(request,listing_id):
-    #desactivamos el listing
-    #return HttpResponse("Hello, Brian!")
     set_close = Listing.objects.get(creator=request.user,id=listing_id)
-    print("AQUIII",set_close.pk,set_close)
     set_close.active=False
     set_close.save()
-    print("**** se ha desactivado")
-    #una vez desactivado, hay que redirigir a la ventana
-    """ product=set_close.title
-    creador=set_close.creator
-    pricef=set_close.price
-    categoria=set_close.category """
-    #try:
+    #print("**** se ha desactivado")
     bidder_exits=Bid.objects.get(listing=set_close)
     print(bidder_exits)
-    #except bidder_exits.DoesNotExist:
-        #bidder_exits = None
     if(bidder_exits is not None):
-        #winner=Bid.objects.get(id=listing_id)
         winner_name=bidder_exits.bidder
 
         return render(request, "auctions/closing.html", {
@@ -205,7 +183,7 @@ def closed_list(request):
     articles= Listing.objects.get(creator=request.user)
     a=Bid.objects.get(listing=articles)
     if(a is not None):
-        #winner=Bid.objects.get(id=listing_id)
+        
         winner_name=a.bidder
 
         return render(request, "auctions/closing.html", {
@@ -214,10 +192,7 @@ def closed_list(request):
         })
     else:
         return HttpResponseRedirect(reverse("index"))        
-    
 
-    #oferta=Bid(listing=listing_items, bidder=request.user,bid_price=user_bid)
-    #return HttpResponseRedirect(reverse("index"))
 #mostrar los comentarios
 def categories(request):
     categories = Listing.objects.filter(active=True).order_by("category").values_list("category", flat=True).distinct()
@@ -227,8 +202,6 @@ def categories(request):
     })
 def category_listings(request,category):
     #muestra solo las listas que pertenecen a la categoría específica
-
-    #return HttpResponse("Hello, Brian!")
 
     return render(request, "auctions/index.html", {
         #"category": category,
@@ -254,68 +227,47 @@ def add_comment(request, listing_id):
             "listing": listing,
             "comments": comments,
             "comment_form": form #,
-            #"bid_form": NewBidForm(),
-            #"in_watchlist": in_watchlist
+            
         })
 @login_required
 def get_watchlist(request):
     #aqui se va a mostrar todos los elementos que sigo
-    #listing=Listing.objects.get(id=listing_id)
-    """if request.user.is_authenticated:
-        in_watchlist = request.user.watchlist.all()
-        print(in_watchlist)
-    else:
-        in_watchlist = False
-    return render(request,"auctions/watchlist.html",{
-        "watchlist": in_watchlist
-        })"""
+    
     w=watchlist.objects.all().filter(creator_list=request.user).values()
-    print("holi",w)
     #l=Listing.objects.get(w)
     items=[]
     for item in w.iterator():
        print(item['listing_id_id'])
        items.append(item['listing_id_id'])
     listing=Listing.objects.all().filter(id__in=items)
-    print("______",items)
-    print("lis   ",listing)
-    #listing =Listing.objects.filter(id=items)
+    #print("______",items)
+    #print("lis   ",listing)
     return render(request, "auctions/index.html",{
         "listings":listing#,
         #"watchlist":w
     })
 
-    #datos = User.objects.all().values()
-    
-
     if w is None:
         return HttpResponse("None")
     else:
         return HttpResponse("Hello, Brian!")
-    #listing =Listing.objects.all()
-    
-    
+       
 @login_required
 def add_watchlist(request,listing_id): 
     #añade un documento a la watchlist o lo remueve si ya esta
-    #listing, _, in_watchlist = listing_page_utility(request, listing_id)
     listing=Listing.objects.get(id=listing_id)
-    #p
-    #add = watchlist(creator_list=request.user, listing_id=listing_id)
     added=watchlist.objects.filter(creator_list=request.user,listing_id=listing) #da true o false
     print("*******added",added)
     if added: #existe
         print("removido")
         added.delete()
         return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
-        #return get_watchlist(request)
     else:
 
         print("añadido")
         add = watchlist(creator_list=request.user, listing_id=listing)
         add.save()
         return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
-        #return get_watchlist(request)
 @login_required
 def add_bid(request,listingid):
     current_bid = Listing.objects.get(id=listingid)
@@ -329,57 +281,26 @@ def add_bid(request,listingid):
             listing_items.price = user_bid #se intercambia el valor 
             listing_items.save()
             #comprobamos que no haya ofertado antes
-            Bid_exist=Bid.objects.filter(listing=listing_items)
-            #Bid_exist=Bid.objects.filter(listing=)
-            #print("*****",Bid_exist)
-       
+            Bid_exist=Bid.objects.filter(listing=listing_items)   
             if Bid_exist:
                 Bid_exist.bid_price=user_bid
                 Bid_exist.bidder=request.user
                 Bid.objects.filter(listing=listing_items).update(bidder=request.user,bid_price=user_bid)
-                print("actualizando.." ,Bid_exist.bid_price,Bid_exist.bidder)
-                #Bid_exist.save()
-                print("actualizando mi oferta")
                 
             else:
-                #guardamos en la lista de ofertas7
+                #guardamos en la lista de ofertas
                 oferta=Bid(listing=listing_items, bidder=request.user,bid_price=user_bid)
                 oferta.save()
                 print("guardado oferta nueva")
             return listing(request,listingid)
         else:
             return HttpResponseRedirect(reverse("index")) #cambiar
-    """ if request.method == "POST":
-        user_bid = int(request.POST.get("bid"))
-        if user_bid > current_bid:
-            listing_items = Listing.objects.get(id=listingid)
-            listing_items.price = user_bid
-            listing_items.save()
-            try:
-                if Bid.objects.filter(id=listingid):
-                    bidrow = Bid.objects.filter(id=listingid)
-                    bidrow.delete()
-                bidtable = Bid()
-                bidtable.user=request.user.username
-                bidtable.title = listing_items.title
-                bidtable.listingid = listingid
-                bidtable.bid = us """
-    #pass
+
 @login_required
 def winnings(request):
     #desactivamos el listing
-    #return HttpResponse("Hello, Brian!")
     win = Bid.objects.filter(bidder=request.user)
-    
-    print("HOLAAAAAA*************",win)
-    #set_close.active=False
-    #set_close.save()
-    #una vez desactivado, hay que redirigir a la ventana
-   
-    #a=Bid.objects.get(listing=win)
     if(win is not None):
-        #winner=Bid.objects.get(id=listing_id)
-        
 
         return render(request, "auctions/winning.html", {
         "listing": win,
@@ -389,20 +310,3 @@ def winnings(request):
     else:
         return HttpResponseRedirect(reverse("index"))
         
-
-    pass
-    """if request.user.is_authenticated:
-        in_watchlist = listing in request.user.watchlist.all()
-    else:
-        in_watchlist = False
-
-    if in_watchlist:
-        request.user.watchlist.remove(listing)
-    else:
-        request.user.watchlist.add(listing)
-
-    return HttpResponseRedirect(reverse("listing", args=(listing.id,)))"""
-    
-
-#cosillas que faltan
-#activar el closing
