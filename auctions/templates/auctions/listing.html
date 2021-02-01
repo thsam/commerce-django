@@ -1,31 +1,33 @@
 {% extends "auctions/layout.html" %}
 {% block body %}
-<div>
-    <h2>
-        {% if not listing.active %}
-        CLOSED - 
-        {% endif %}
-        {{ listing.title }}
-    </h2>
+<div class="d-flex justify-content-start">
+    <div class="img-fluid p-2">
     
-    {% if listing.image %}
-    <img class="my-3 w-50 p-3" src="{{ listing.image }}" alt="{{ listing.title }}">
-    {% endif %}
-    <p>{{ listing.description }}</p>
+        {% if listing.image %}
+        <img class="img-fluid" src="{{ listing.image }}" alt="{{ listing.title }}">
+        {% endif %}
+    </div>
+
+    <div class="mt-4 p-2 flex-grow-1 w-100">
+        <h2>
+            {% if not listing.active %}
+            CLOSED - 
+            {% endif %}
+            {{ listing.title }}
+        </h2>
+        <p>{{ listing.description }}</p>
 
         <h2 class="my-3">${% firstof listing.highest_bid_price|floatformat:"2" listing.price %}</h2>
         <!--<a class="btn btn-primary" href="{% url 'add_watchlist' listing.id %}" role="button">WatchList</a>-->
-    </div>
-
-    <div class="mt-4">
         <h3 class="text-primary">Details</h3>
         <ul>
             <li><strong>Category: </strong>{{ listing.category|capfirst }}</li>
             <li><strong>Listed by: </strong>{{ listing.creator.username }}</li>
             <li><strong>Listed on: </strong>{{ listing.timestamp|date:"F j Y, h:i a" }}</li>
         </ul>
-    </div>
+    
     <!-- añadir/remover watchlist-->
+
     <p> 
         {% if user.is_authenticated %}
             {% if added %}
@@ -38,6 +40,7 @@
             {% endif %}
         {% endif %}
     </p>
+
     <!-- agregar una oferta-->
     <div class="mt-4">
         {% if user.is_authenticated %}
@@ -56,6 +59,8 @@
         {% endif %}
 
     </div>
+</div>
+</div>
     <!-- Agregar comentarios de los comentarios
     {% if user.is_authenticated %}
         <div class="card-header">
@@ -99,4 +104,5 @@
             <p>No comments yet.</p>
         {% endfor %}
     </div>
+
 {% endblock %}

@@ -4,7 +4,7 @@ from django.db import models
 
 class User(AbstractUser):
     pass 
-    #watchlist = models.ManyToManyField("Listing", blank=True, related_name="watchlist")
+    
 
 class Listing(models.Model): #ARTICULOS DE SUBASTA
     
@@ -21,13 +21,13 @@ class Listing(models.Model): #ARTICULOS DE SUBASTA
         return self.title
 
 class Bid(models.Model): #OFERTAS
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids", null=True)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listing", null=True)
     bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids", null=True)
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
     bid_price = models.DecimalField(decimal_places=2, verbose_name="Bid Price", max_digits=15, null=True)
 
-    """ def __str__(self):
-        return f"{self.bidder} bid ${self.bid_price} for {self.listing}" """
+    def __str__(self):
+        return f"{self.bidder} bid ${self.bid_price} for {self.listing}"
 
 class Comment(models.Model): #COMENTARIOS
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments", null=True)

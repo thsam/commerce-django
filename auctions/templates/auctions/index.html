@@ -7,7 +7,7 @@
         {% for listing in listings %}
         {% if  listing.active %}
             <div class="card" >
-                <h3 class="card-title">{{listing.title}} ID: {{listing.id}}</h3>
+                <h3 class="card-title"></h3>
                 {% if listing.image %}
                     <img src="{{ listing.image }}" class="card-img-top" alt="{{ listing.title }}">
                 {% endif %}

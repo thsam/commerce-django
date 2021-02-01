@@ -175,6 +175,7 @@ def close_listing(request,listing_id):
     #desactivamos el listing
     #return HttpResponse("Hello, Brian!")
     set_close = Listing.objects.get(creator=request.user,id=listing_id)
+    print("AQUIII",set_close.pk,set_close)
     set_close.active=False
     set_close.save()
     print("**** se ha desactivado")
@@ -183,11 +184,11 @@ def close_listing(request,listing_id):
     creador=set_close.creator
     pricef=set_close.price
     categoria=set_close.category """
+    #try:
     bidder_exits=Bid.objects.get(listing=set_close)
-    try:
-        bidder_exits=Bid.objects.get(listing=set_close)
-    except bidder_exits.DoesNotExist:
-        bidder_exits = None
+    print(bidder_exits)
+    #except bidder_exits.DoesNotExist:
+        #bidder_exits = None
     if(bidder_exits is not None):
         #winner=Bid.objects.get(id=listing_id)
         winner_name=bidder_exits.bidder
@@ -329,15 +330,22 @@ def add_bid(request,listingid):
             listing_items.save()
             #comprobamos que no haya ofertado antes
             Bid_exist=Bid.objects.filter(listing=listing_items)
+            #Bid_exist=Bid.objects.filter(listing=)
+            #print("*****",Bid_exist)
+       
             if Bid_exist:
+                Bid_exist.bid_price=user_bid
+                Bid_exist.bidder=request.user
+                Bid.objects.filter(listing=listing_items).update(bidder=request.user,bid_price=user_bid)
+                print("actualizando.." ,Bid_exist.bid_price,Bid_exist.bidder)
+                #Bid_exist.save()
+                print("actualizando mi oferta")
+                
+            else:
                 #guardamos en la lista de ofertas7
                 oferta=Bid(listing=listing_items, bidder=request.user,bid_price=user_bid)
                 oferta.save()
                 print("guardado oferta nueva")
-            else:
-                Bid_exist.bid_price=user_bid
-                #Bid_exist.save()
-                print("actualizando mi oferta")
             return listing(request,listingid)
         else:
             return HttpResponseRedirect(reverse("index")) #cambiar
