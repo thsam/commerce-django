@@ -26,3 +26,8 @@ Complete the implementation of your auction site. You must fulfill the following
 
 **Course [here](https://www.edx.org/course/cs50s-web-programming-with-python-and-javascript)** 📚 👌
 CS50's Web Programming with Python and JavaScript
+
+## Links
+|Heroku 🔨                         | Youtube 🔖 |
+|----------                          |-------------|
+| https://commerce-thcs50.herokuapp.com/    |  https://youtu.be/BQr_SmMRs8s|
