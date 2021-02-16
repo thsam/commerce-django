@@ -30,4 +30,4 @@ CS50's Web Programming with Python and JavaScript
 ## Links
 |Heroku 🔨                         | Youtube 🔖 |
 |----------                          |-------------|
-| https://commerce-thcs50.herokuapp.com/    |  https://youtu.be/BQr_SmMRs8s|
+| https://commerce-thcs50.herokuapp.com/    | https://youtu.be/NrQJIuhq9q4 |
